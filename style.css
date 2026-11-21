@@ -10,6 +10,7 @@
 }
 
 * { box-sizing: border-box; box-shadow: none !important; text-shadow: none !important; }
+[hidden] { display: none !important; }
 
 body {
   margin: 0;
@@ -116,12 +117,18 @@ textarea {
 .item .swatch { width: 40px; height: 24px; border-radius: 4px; border: 1px solid var(--border); }
 .item button { width: 100%; }
 
+/* Sprites (PNG art). 1em tall so they size like the emoji they replace. */
+.sprite { height: 1em; width: auto; max-width: 2.5em; vertical-align: middle; display: inline-block; }
+.sprite.pixelated { image-rendering: pixelated; }
+.sticker img, .drag-ghost img, .chip img { pointer-events: none; }
+.companion-art { font-size: 20px; vertical-align: middle; }
+
 /* Space stage (drag-and-drop sticker scene) */
 .stage {
   position: relative; aspect-ratio: 4 / 3; overflow: hidden;
   container-type: inline-size; touch-action: none; user-select: none;
   border: 1px solid var(--border); border-radius: 6px;
-  background: linear-gradient(var(--wall, #efe9df) 0 66%, var(--floor, #d9cbb5) 66% 100%);
+  background: #efe9df; /* real backdrop set from js (backdropCSS) */
 }
 .sticker {
   position: absolute; line-height: 1; font-size: 11cqw; cursor: grab;

@@ -48,8 +48,7 @@ function removeSticker(uid) {
 function renderStage() {
   const stage = $("#stage");
   const bd = CATALOG.backdrops.find((b) => b.id === state.stage.backdrop) || CATALOG.backdrops[0];
-  stage.style.setProperty("--wall", bd.wall);
-  stage.style.setProperty("--floor", bd.floor);
+  stage.style.background = backdropCSS(bd);
   stage.innerHTML = "";
 
   state.stage.items.forEach((it) => {
@@ -57,11 +56,11 @@ function renderStage() {
     if (!info) return;
     const el = document.createElement("div");
     el.className = "sticker" + (it.uid === selectedSticker ? " selected" : "");
-    el.textContent = info.icon;
+    el.innerHTML = artHTML(info);
     el.title = info.name;
     el.style.left = it.x + "%";
     el.style.top = it.y + "%";
-    el.style.setProperty("--s", it.s);
+    el.style.setProperty("--s", it.s * (info.size || 1));
     el.style.setProperty("--flip", it.flip ? -1 : 1);
     el.onpointerdown = (e) => startMove(e, it, el);
     stage.appendChild(el);
@@ -132,7 +131,7 @@ document.getElementById("btn-clear-stage").onclick = () => {
 
 /* ---------- Tray ---------- */
 // Drag a chip onto the stage to place it; a plain tap drops it in the middle.
-function startTrayDrag(e, kind, id, icon) {
+function startTrayDrag(e, kind, id, info) {
   e.preventDefault();
   const chip = e.currentTarget;
   chip.setPointerCapture(e.pointerId);
@@ -144,7 +143,7 @@ function startTrayDrag(e, kind, id, icon) {
     if (!ghost) {
       ghost = document.createElement("div");
       ghost.className = "drag-ghost";
-      ghost.textContent = icon;
+      ghost.innerHTML = artHTML(info);
       document.body.appendChild(ghost);
     }
     ghost.style.left = ev.clientX + "px";
@@ -169,8 +168,8 @@ function renderTrayRow(el, kind, counts, emptyText) {
     const chip = document.createElement("div");
     chip.className = "chip";
     chip.title = info.name;
-    chip.innerHTML = `<div class="icon">${info.icon}</div><div>${kind === "decor" ? "×" + counts[id] : ""}</div>`;
-    chip.onpointerdown = (e) => startTrayDrag(e, kind, id, info.icon);
+    chip.innerHTML = `<div class="icon">${artHTML(info)}</div><div>${kind === "decor" ? "×" + counts[id] : ""}</div>`;
+    chip.onpointerdown = (e) => startTrayDrag(e, kind, id, info);
     el.appendChild(chip);
   });
 }
@@ -186,7 +185,7 @@ function renderTray() {
     const chip = document.createElement("div");
     chip.className = "chip" + (state.stage.backdrop === b.id ? " active" : "");
     chip.style.cursor = "pointer";
-    chip.innerHTML = `<div class="backdrop-swatch" style="background:linear-gradient(${b.wall} 0 60%, ${b.floor} 60%)"></div><div>${b.name}</div>`;
+    chip.innerHTML = `<div class="backdrop-swatch" style='background:${backdropCSS(b)}'></div><div>${b.name}</div>`;
     chip.onclick = () => { state.stage.backdrop = b.id; saveState(); renderSpace(); renderShop(); };
     picker.appendChild(chip);
   });

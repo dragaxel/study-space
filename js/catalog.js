@@ -10,7 +10,8 @@ const CATALOG = {
     { id: "paper",   name: "Paper",    price: 100, vars: { "--bg": "#ffffff", "--surface": "#ffffff", "--text": "#000000", "--muted": "#777777", "--border": "#000000", "--accent": "#000000", "--accent-text": "#ffffff" } },
   ],
 
-  // Backdrops for the Space stage: a wall colour and a floor colour.
+  // Backdrops for the Space stage: a wall colour and a floor colour,
+  // or add `image: "assets/backdrops/your-room.png"` to use a picture (wall is the fallback colour).
   backdrops: [
     { id: "plain",  name: "Cozy Room",  price: 0,   wall: "#efe9df", floor: "#d9cbb5" },
     { id: "mint",   name: "Mint Study", price: 40,  wall: "#d8efe4", floor: "#b9a58a" },
@@ -19,7 +20,10 @@ const CATALOG = {
   ],
 
   // Decorations are stickers you drag onto the Space stage. Buy as many copies as you like.
+  // Art: `icon` (emoji) is required as a fallback; add `sprite` to use a PNG instead.
+  // See assets/README.md for the full list of art options.
   decorations: [
+    { id: "desk",   name: "Study Desk", icon: "🪑", price: 50, sprite: "assets/decorations/desk.png", pixelated: true, size: 1.6 },
     { id: "plant",  name: "Plant",  icon: "🪴", price: 10 },
     { id: "lamp",   name: "Lamp",   icon: "💡", price: 15 },
     { id: "books",  name: "Books",  icon: "📚", price: 15 },
@@ -45,6 +49,7 @@ const CATALOG = {
 
 // ---------- Wish (gacha) ----------
 // Study buddies you can wish for. rarity: 3 = common, 4 = rare, 5 = legendary.
+// Same art options as decorations: `icon` emoji, optional `sprite` PNG (see assets/README.md).
 const BUDDIES = [
   { id: "frog",    name: "Pip the Frog",       icon: "🐸", rarity: 3 },
   { id: "turtle",  name: "Shelly the Turtle",  icon: "🐢", rarity: 3 },
@@ -52,6 +57,7 @@ const BUDDIES = [
   { id: "chick",   name: "Peep the Chick",     icon: "🐥", rarity: 3 },
   { id: "snail",   name: "Slowpoke the Snail", icon: "🐌", rarity: 3 },
   { id: "owl",     name: "Professor Hoot",     icon: "🦉", rarity: 4 },
+  { id: "blob",    name: "Gloop the Slime",    icon: "🟢", rarity: 4, sprite: "assets/buddies/blob.png", pixelated: true },
   { id: "fox",     name: "Ember the Fox",      icon: "🦊", rarity: 4 },
   { id: "penguin", name: "Waddles",            icon: "🐧", rarity: 4 },
   { id: "panda",   name: "Bao the Panda",      icon: "🐼", rarity: 4 },

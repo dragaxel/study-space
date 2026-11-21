@@ -245,8 +245,8 @@ function renderShop() {
       const visual = kind === "themes"
         ? `<div class="swatch" style="background:${item.vars["--accent"]}"></div>`
         : kind === "backdrops"
-        ? `<div class="backdrop-swatch" style="background:linear-gradient(${item.wall} 0 60%, ${item.floor} 60%)"></div>`
-        : `<div class="icon">${item.icon}</div>`;
+        ? `<div class="backdrop-swatch" style='background:${backdropCSS(item)}'></div>`
+        : `<div class="icon">${artHTML(item)}</div>`;
       div.innerHTML = `${visual}<div>${item.name}</div>`;
       const btn = document.createElement("button");
 
@@ -289,7 +289,7 @@ function renderGames() {
   owned.forEach((g) => {
     const div = document.createElement("div");
     div.className = "item";
-    div.innerHTML = `<div class="icon">${g.icon}</div><div>${g.name}</div>`;
+    div.innerHTML = `<div class="icon">${artHTML(g)}</div><div>${g.name}</div>`;
     const btn = document.createElement("button");
     btn.textContent = "Play";
     btn.className = "primary";

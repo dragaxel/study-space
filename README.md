@@ -13,6 +13,8 @@ Open `index.html` in a browser. No build step. Progress is saved in the browser'
 - **Wish**: banner-style gacha. Spend gems on study buddies (1 gem per wish, 10 gems for a 10-wish). 3★/4★/5★ rarities, a featured buddy per banner with 50% rate-up, a 4★-or-better guarantee in every 10-wish, and a guaranteed 5★ within 50 wishes. Pick an owned buddy to show on the Focus page.
 
 ## Extending the template
+- **Sprite art:** decorations, study buddies and mini games can use PNG sprites instead of emoji, and backdrops can use images. Drop the PNG in `assets/decorations/`, `assets/buddies/` or `assets/backdrops/` and add `sprite: "assets/...png"` (or `image:` for backdrops) to its catalog entry. See [`assets/README.md`](assets/README.md) for fields, sizing and tips.
+- `js/sprites.js`: renders an item's art (sprite with emoji fallback) everywhere it appears.
 - `js/space.js`: the drag-and-drop stage.
 - `js/catalog.js`: add backdrops (wall + floor colour), themes (CSS variable sets), decorations (emoji + price), mini games, timer settings, and gem rules (`gemsPerSubmission`, `partnerBonusGems`, `minMinutesForGem`, `coinsPerGem`).
 - `BUDDIES`, `BANNERS`, `WISH` in `js/catalog.js`: add buddies, add or rotate banners, tune rates, pity and cost. Logic is in `js/gacha.js`.
