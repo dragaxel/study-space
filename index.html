@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Study Space</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>study space</h1>
+    <div class="coins"><span id="coin-count">0</span> coins</div>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="focus" class="active">Focus</button>
+    <button data-tab="space">Space</button>
+    <button data-tab="shop">Shop</button>
+    <button data-tab="games">Games</button>
+  </nav>
+
+  <main>
+    <!-- FOCUS: pomodoro timer + assignments -->
+    <section id="tab-focus" class="tab active">
+      <div class="card timer-card">
+        <div id="timer-mode" class="label">focus</div>
+        <div id="timer-display" class="timer">25:00</div>
+        <div class="label">working on: <span id="current-assignment">nothing selected</span></div>
+        <div class="row">
+          <button id="btn-start" class="primary">Start</button>
+          <button id="btn-reset">Reset</button>
+          <button id="btn-skip">Skip</button>
+        </div>
+        <div class="small">Earn 1 coin per focused minute.</div>
+      </div>
+
+      <div class="card">
+        <h2>Assignments</h2>
+        <form id="assignment-form" class="row">
+          <input id="assignment-input" placeholder="Add an assignment..." maxlength="80" required>
+          <button class="primary">Add</button>
+        </form>
+        <ul id="assignment-list" class="list"></ul>
+      </div>
+    </section>
+
+    <!-- SPACE: decorate your room -->
+    <section id="tab-space" class="tab">
+      <div class="card">
+        <h2>Your space</h2>
+        <p class="small">Pick a decoration below, then click a spot in the room. Click a placed item to remove it.</p>
+        <div id="room" class="room"></div>
+      </div>
+      <div class="card">
+        <h2>Inventory</h2>
+        <div id="inventory" class="grid"></div>
+      </div>
+    </section>
+
+    <!-- SHOP -->
+    <section id="tab-shop" class="tab">
+      <div class="card"><h2>Themes</h2><div id="shop-themes" class="grid"></div></div>
+      <div class="card"><h2>Decorations</h2><div id="shop-decorations" class="grid"></div></div>
+      <div class="card"><h2>Mini games</h2><div id="shop-games" class="grid"></div></div>
+    </section>
+
+    <!-- GAMES -->
+    <section id="tab-games" class="tab">
+      <div class="card">
+        <h2>Mini games</h2>
+        <div id="games-list" class="grid"></div>
+      </div>
+      <div class="card" id="game-stage-card" hidden>
+        <div class="row between">
+          <h2 id="game-title"></h2>
+          <button id="btn-close-game">Close</button>
+        </div>
+        <div id="game-stage"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/catalog.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/games.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
