@@ -2,7 +2,7 @@
 
 A minimalist pomodoro homework tracker. Focus time earns coins; spend them on themes, room decorations and mini games.
 
-Open `index.html` in a browser. No build step. Progress is saved in the browser's localStorage.
+Open `index.html` in a browser. No build step. Progress is saved in the browser's localStorage. To move it to another browser or device (or back it up), use the **Save** tab: generate a save code, copy it, and paste it into Load on the other side.
 
 ## How it works
 - **Focus**: add assignments with an optional deadline (each shows the due date and a live "time left" countdown, sorted soonest first), select one, run the 25/5 pomodoro timer. Each focused minute = 1 coin + 1 minute logged to the assignment.

@@ -28,6 +28,9 @@ function loadState() {
 
 let state = loadState();
 
+// UI-only fields that never get saved.
+const serializeState = (s) => JSON.stringify(s, (k, v) => (k === "editingDeadline" ? undefined : v));
+
 function saveState() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state, (k, v) => (k === "editingDeadline" ? undefined : v))); } catch (e) {}
+  try { localStorage.setItem(STORAGE_KEY, serializeState(state)); } catch (e) {}
 }

@@ -60,6 +60,11 @@ button:hover { border-color: var(--accent); }
 button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
 button:disabled { opacity: 0.4; cursor: default; }
 input { flex: 1; min-width: 0; }
+textarea {
+  width: 100%; font: 13px/1.4 ui-monospace, Menlo, Consolas, monospace; color: var(--text);
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px;
+  resize: vertical; word-break: break-all;
+}
 
 .row { display: flex; gap: 8px; align-items: center; margin: 12px 0; }
 .row.between { justify-content: space-between; margin: 0 0 12px; }

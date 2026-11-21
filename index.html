@@ -21,6 +21,7 @@
     <button data-tab="shop">Shop</button>
     <button data-tab="games">Games</button>
     <button data-tab="wish">Wish</button>
+    <button data-tab="save">Save</button>
   </nav>
 
   <main>
@@ -121,12 +122,35 @@
         <div id="buddy-collection" class="grid"></div>
       </div>
     </section>
+
+    <!-- SAVE: export / import progress as a code -->
+    <section id="tab-save" class="tab">
+      <div class="card">
+        <h2>Get your save code</h2>
+        <p class="small">Copy this code somewhere safe (notes app, email to yourself). It holds everything: coins, gems, assignments, decorations, buddies.</p>
+        <div class="row">
+          <button id="btn-make-code" class="primary">Generate code</button>
+          <button id="btn-copy-code" disabled>Copy</button>
+        </div>
+        <textarea id="save-code-out" rows="4" readonly placeholder="Your code will appear here"></textarea>
+      </div>
+      <div class="card">
+        <h2>Load a save code</h2>
+        <p class="small">Paste a code to restore progress on this browser. This replaces the current progress here.</p>
+        <textarea id="save-code-in" rows="4" placeholder="Paste a code starting with SS1-"></textarea>
+        <div class="row">
+          <button id="btn-load-code" class="primary">Load</button>
+          <span id="save-code-msg" class="small"></span>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script src="js/catalog.js"></script>
   <script src="js/state.js"></script>
   <script src="js/games.js"></script>
   <script src="js/gacha.js"></script>
+  <script src="js/savecode.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
