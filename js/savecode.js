@@ -56,7 +56,7 @@ document.getElementById("btn-load-code").onclick = async () => {
   try {
     const data = await readSaveCode(document.getElementById("save-code-in").value);
     if (!confirm("Replace the progress on this browser with this code?")) return;
-    state = { ...defaultState(), ...data };
+    state = normalizeState(data);
     saveState();
     applyTheme();
     renderAll();

@@ -1,7 +1,6 @@
 // Saved progress, stored in the browser's localStorage.
 
 const STORAGE_KEY = "study-space-v1";
-const ROOM_SLOTS = 24; // 6 x 4 grid
 
 function defaultState() {
   return {
@@ -9,19 +8,37 @@ function defaultState() {
     gems: 0,
     assignments: [],          // { id, name, minutes, done, gemAwarded }
     currentAssignmentId: null,
-    owned: { themes: ["default"], decorations: [], games: [] },
+    owned: { themes: ["default"], decorations: [], games: [], backdrops: ["plain"] },
     activeTheme: "default",
-    room: Array(ROOM_SLOTS).fill(null), // decoration id per slot
+    // Space stage. items are stickers in back-to-front order:
+    // { uid, kind: "decor" | "buddy", id, x, y (centre, % of stage), s (scale), flip }
+    stage: { backdrop: "plain", items: [] },
     buddies: {},              // buddy id -> copies owned
     activeBuddy: null,        // buddy shown on the Focus page
     pity: 0,                  // wishes since last legendary
   };
 }
 
+// Fill in anything missing from older saves (also used when loading a save code).
+function normalizeState(saved) {
+  const base = defaultState();
+  const s = { ...base, ...saved };
+  s.owned = { ...base.owned, ...(saved.owned || {}) };
+  s.stage = { ...base.stage, ...(saved.stage || {}) };
+  // v1 saves had a 6x4 grid "room": turn each filled slot into a sticker in the same spot.
+  if (Array.isArray(saved.room)) {
+    saved.room.forEach((id, i) => {
+      if (id) s.stage.items.push({ uid: "m" + i, kind: "decor", id, x: ((i % 6) + 0.5) / 6 * 100, y: (Math.floor(i / 6) + 0.5) / 4 * 100, s: 1, flip: false });
+    });
+    delete s.room;
+  }
+  return s;
+}
+
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved) return { ...defaultState(), ...saved };
+    if (saved) return normalizeState(saved);
   } catch (e) { /* storage unavailable or corrupt: start fresh */ }
   return defaultState();
 }

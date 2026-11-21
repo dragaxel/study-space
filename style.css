@@ -116,18 +116,33 @@ textarea {
 .item .swatch { width: 40px; height: 24px; border-radius: 4px; border: 1px solid var(--border); }
 .item button { width: 100%; }
 
-/* Room */
-.room {
-  display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px;
-  border: 1px solid var(--border); border-radius: 6px; padding: 4px;
-  background: var(--bg);
+/* Space stage (drag-and-drop sticker scene) */
+.stage {
+  position: relative; aspect-ratio: 4 / 3; overflow: hidden;
+  container-type: inline-size; touch-action: none; user-select: none;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: linear-gradient(var(--wall, #efe9df) 0 66%, var(--floor, #d9cbb5) 66% 100%);
 }
-.slot {
-  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-  font-size: 32px; border: 1px dashed var(--border); border-radius: 4px; cursor: pointer;
+.sticker {
+  position: absolute; line-height: 1; font-size: 11cqw; cursor: grab;
+  transform: translate(-50%, -50%) scale(var(--s, 1)) scaleX(var(--flip, 1));
+  padding: 2px; border: 2px solid transparent; border-radius: 6px;
 }
-.slot:hover { border-color: var(--accent); }
-.slot.floor { background: var(--surface); }
+.sticker.selected { border: 2px dashed var(--accent); }
+.sticker.dragging { cursor: grabbing; }
+.drag-ghost { position: fixed; z-index: 100; pointer-events: none; font-size: 48px; transform: translate(-50%, -50%); }
+.tools { flex-wrap: wrap; }
+.tools button { padding: 6px 12px; }
+.tray { display: flex; gap: 8px; overflow-x: auto; padding: 6px 0 12px; touch-action: pan-x; }
+.tray .chip {
+  flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  min-width: 64px; padding: 8px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--surface); cursor: grab; user-select: none; touch-action: none; font-size: 12px;
+}
+.tray .chip .icon { font-size: 28px; line-height: 1; }
+.tray .chip.active { border-color: var(--accent); border-width: 2px; }
+.tray .empty { font-size: 13px; color: var(--muted); padding: 8px 0; }
+.backdrop-swatch { width: 40px; height: 30px; border-radius: 4px; border: 1px solid var(--border); }
 
 /* Wish (gacha) */
 .banner { display: flex; gap: 20px; align-items: center; border: 2px solid var(--accent); }

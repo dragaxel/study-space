@@ -10,7 +10,15 @@ const CATALOG = {
     { id: "paper",   name: "Paper",    price: 100, vars: { "--bg": "#ffffff", "--surface": "#ffffff", "--text": "#000000", "--muted": "#777777", "--border": "#000000", "--accent": "#000000", "--accent-text": "#ffffff" } },
   ],
 
-  // Decorations are placed in the room grid.
+  // Backdrops for the Space stage: a wall colour and a floor colour.
+  backdrops: [
+    { id: "plain",  name: "Cozy Room",  price: 0,   wall: "#efe9df", floor: "#d9cbb5" },
+    { id: "mint",   name: "Mint Study", price: 40,  wall: "#d8efe4", floor: "#b9a58a" },
+    { id: "night",  name: "Night Loft", price: 60,  wall: "#2b2f4a", floor: "#4a3f35" },
+    { id: "garden", name: "Garden",     price: 80,  wall: "#cfe6f7", floor: "#9cc98a" },
+  ],
+
+  // Decorations are stickers you drag onto the Space stage. Buy as many copies as you like.
   decorations: [
     { id: "plant",  name: "Plant",  icon: "🪴", price: 10 },
     { id: "lamp",   name: "Lamp",   icon: "💡", price: 15 },
@@ -18,6 +26,13 @@ const CATALOG = {
     { id: "chair",  name: "Chair",  icon: "🪑", price: 20 },
     { id: "clock",  name: "Clock",  icon: "🕰️", price: 25 },
     { id: "frame",  name: "Picture", icon: "🖼️", price: 30 },
+    { id: "coffee", name: "Coffee", icon: "☕", price: 5 },
+    { id: "candle", name: "Candle", icon: "🕯️", price: 10 },
+    { id: "teddy",  name: "Teddy",  icon: "🧸", price: 20 },
+    { id: "headphones", name: "Headphones", icon: "🎧", price: 25 },
+    { id: "computer", name: "Computer", icon: "🖥️", price: 40 },
+    { id: "window", name: "Window", icon: "🪟", price: 40 },
+    { id: "bed",    name: "Bed",    icon: "🛏️", price: 60 },
     { id: "cat",    name: "Cat",    icon: "🐈", price: 80 },
   ],
 
