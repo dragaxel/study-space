@@ -43,7 +43,7 @@ function wish(count) {
 function buddyCard(b, extraClass = "") {
   const div = document.createElement("div");
   div.className = `item r${b.rarity} ${extraClass}`;
-  div.innerHTML = `<div class="icon">${b.icon}</div><div class="stars">${stars(b.rarity)}</div><div></div>`;
+  div.innerHTML = `<div class="icon">${artHTML(b)}</div><div class="stars">${stars(b.rarity)}</div><div></div>`;
   div.lastChild.textContent = b.name;
   return div;
 }
@@ -70,7 +70,7 @@ function renderWish() {
     tabs.appendChild(btn);
   });
 
-  $("#banner-art").textContent = featured.icon;
+  $("#banner-art").innerHTML = artHTML(featured);
   $("#banner-name").textContent = banner.name;
   $("#banner-blurb").textContent = `Featured: ${featured.name} ${stars(featured.rarity)}. ${banner.blurb}`;
   const pct = (r) => +(WISH.rates[r] * 100).toFixed(1) + "%";
@@ -103,7 +103,10 @@ function renderWish() {
   const comp = $("#buddy-companion");
   const active = state.activeBuddy && buddy(state.activeBuddy);
   comp.hidden = !active;
-  if (active) comp.textContent = `${active.icon} ${active.name} is studying with you`;
+  if (active) {
+    comp.innerHTML = `<span class="companion-art">${artHTML(active)}</span> <span></span>`;
+    comp.lastChild.textContent = `${active.name} is studying with you`;
+  }
 }
 
 document.getElementById("btn-wish-1").onclick = () => wish(1);

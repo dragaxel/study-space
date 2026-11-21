@@ -21,6 +21,7 @@
     <button data-tab="shop">Shop</button>
     <button data-tab="games">Games</button>
     <button data-tab="wish">Wish</button>
+    <button data-tab="save">Save</button>
   </nav>
 
   <main>
@@ -58,13 +59,29 @@
     <!-- SPACE: decorate your room -->
     <section id="tab-space" class="tab">
       <div class="card">
-        <h2>Your space</h2>
-        <p class="small">Pick a decoration below, then click a spot in the room. Click a placed item to remove it.</p>
-        <div id="room" class="room"></div>
+        <div class="row between">
+          <h2>Your space</h2>
+          <button id="btn-clear-stage">Put everything away</button>
+        </div>
+        <p class="small">Drag stickers from the tray onto the stage. Drag them around, tap one to resize, flip or layer it, and drag it off the stage to put it away.</p>
+        <div id="stage" class="stage"></div>
+        <div id="sticker-tools" class="row tools" hidden>
+          <button data-tool="smaller" title="Smaller">−</button>
+          <button data-tool="bigger" title="Bigger">+</button>
+          <button data-tool="flip" title="Flip">Flip</button>
+          <button data-tool="back" title="Send backward">Back</button>
+          <button data-tool="front" title="Bring forward">Front</button>
+          <button data-tool="remove" title="Put away">Put away</button>
+        </div>
       </div>
       <div class="card">
-        <h2>Inventory</h2>
-        <div id="inventory" class="grid"></div>
+        <h2>Sticker tray</h2>
+        <div class="label">Decorations</div>
+        <div id="tray-decor" class="tray"></div>
+        <div class="label">Study buddies</div>
+        <div id="tray-buddies" class="tray"></div>
+        <div class="label">Backdrop</div>
+        <div id="backdrop-picker" class="tray"></div>
       </div>
     </section>
 
@@ -76,6 +93,7 @@
         <button id="btn-exchange" class="primary">Exchange 1 gem</button>
       </div>
       <div class="card"><h2>Themes</h2><div id="shop-themes" class="grid"></div></div>
+      <div class="card"><h2>Backdrops</h2><div id="shop-backdrops" class="grid"></div></div>
       <div class="card"><h2>Decorations</h2><div id="shop-decorations" class="grid"></div></div>
       <div class="card"><h2>Mini games</h2><div id="shop-games" class="grid"></div></div>
     </section>
@@ -121,12 +139,37 @@
         <div id="buddy-collection" class="grid"></div>
       </div>
     </section>
+
+    <!-- SAVE: export / import progress as a code -->
+    <section id="tab-save" class="tab">
+      <div class="card">
+        <h2>Get your save code</h2>
+        <p class="small">Copy this code somewhere safe (notes app, email to yourself). It holds everything: coins, gems, assignments, decorations, buddies.</p>
+        <div class="row">
+          <button id="btn-make-code" class="primary">Generate code</button>
+          <button id="btn-copy-code" disabled>Copy</button>
+        </div>
+        <textarea id="save-code-out" rows="4" readonly placeholder="Your code will appear here"></textarea>
+      </div>
+      <div class="card">
+        <h2>Load a save code</h2>
+        <p class="small">Paste a code to restore progress on this browser. This replaces the current progress here.</p>
+        <textarea id="save-code-in" rows="4" placeholder="Paste a code starting with SS1-"></textarea>
+        <div class="row">
+          <button id="btn-load-code" class="primary">Load</button>
+          <span id="save-code-msg" class="small"></span>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script src="js/catalog.js"></script>
+  <script src="js/sprites.js"></script>
   <script src="js/state.js"></script>
   <script src="js/games.js"></script>
   <script src="js/gacha.js"></script>
+  <script src="js/space.js"></script>
+  <script src="js/savecode.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

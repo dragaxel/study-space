@@ -234,7 +234,7 @@ function buy(kind, item) {
 }
 
 function renderShop() {
-  const sections = { themes: "#shop-themes", decorations: "#shop-decorations", games: "#shop-games" };
+  const sections = { themes: "#shop-themes", backdrops: "#shop-backdrops", decorations: "#shop-decorations", games: "#shop-games" };
   for (const [kind, sel] of Object.entries(sections)) {
     const el = $(sel);
     el.innerHTML = "";
@@ -244,7 +244,9 @@ function renderShop() {
       div.className = "item";
       const visual = kind === "themes"
         ? `<div class="swatch" style="background:${item.vars["--accent"]}"></div>`
-        : `<div class="icon">${item.icon}</div>`;
+        : kind === "backdrops"
+        ? `<div class="backdrop-swatch" style='background:${backdropCSS(item)}'></div>`
+        : `<div class="icon">${artHTML(item)}</div>`;
       div.innerHTML = `${visual}<div>${item.name}</div>`;
       const btn = document.createElement("button");
 
@@ -253,6 +255,11 @@ function renderShop() {
         btn.textContent = active ? "In use" : "Use";
         btn.disabled = active;
         btn.onclick = () => { state.activeTheme = item.id; saveState(); applyTheme(); renderShop(); };
+      } else if (kind === "backdrops" && owned) {
+        const active = state.stage.backdrop === item.id;
+        btn.textContent = active ? "In use" : "Use";
+        btn.disabled = active;
+        btn.onclick = () => { state.stage.backdrop = item.id; saveState(); renderAll(); };
       } else if (owned && kind === "games") {
         btn.textContent = "Owned"; btn.disabled = true;
       } else {
@@ -269,53 +276,7 @@ function renderShop() {
   }
 }
 
-/* ---------- Space (room decorating) ---------- */
-let selectedDecoration = null;
-
-// How many of each decoration are owned but not yet placed.
-function unplacedCounts() {
-  const counts = {};
-  state.owned.decorations.forEach((id) => (counts[id] = (counts[id] || 0) + 1));
-  state.room.forEach((id) => id && counts[id]--);
-  return counts;
-}
-
-function renderRoom() {
-  const room = $("#room");
-  room.innerHTML = "";
-  state.room.forEach((id, i) => {
-    const slot = document.createElement("div");
-    slot.className = "slot" + (i >= state.room.length - 6 ? " floor" : "");
-    slot.textContent = id ? find("decorations", id).icon : "";
-    slot.onclick = () => {
-      if (id) state.room[i] = null;                    // pick up
-      else if (selectedDecoration && unplacedCounts()[selectedDecoration] > 0) state.room[i] = selectedDecoration;
-      if (selectedDecoration && !(unplacedCounts()[selectedDecoration] > 0)) selectedDecoration = null;
-      saveState();
-      renderSpace();
-    };
-    room.appendChild(slot);
-  });
-}
-
-function renderInventory() {
-  const inv = $("#inventory");
-  inv.innerHTML = "";
-  const counts = unplacedCounts();
-  const ids = Object.keys(counts).filter((id) => counts[id] > 0);
-  if (!ids.length) { inv.innerHTML = `<div class="small">Nothing to place. Buy decorations in the Shop.</div>`; return; }
-  ids.forEach((id) => {
-    const d = find("decorations", id);
-    const div = document.createElement("div");
-    div.className = "item" + (selectedDecoration === id ? " selected" : "");
-    div.innerHTML = `<div class="icon">${d.icon}</div><div>${d.name} ×${counts[id]}</div>`;
-    div.style.cursor = "pointer";
-    div.onclick = () => { selectedDecoration = selectedDecoration === id ? null : id; renderInventory(); };
-    inv.appendChild(div);
-  });
-}
-
-function renderSpace() { renderRoom(); renderInventory(); }
+/* ---------- Space: see js/space.js ---------- */
 
 /* ---------- Mini games ---------- */
 let cleanupGame = null;
@@ -328,7 +289,7 @@ function renderGames() {
   owned.forEach((g) => {
     const div = document.createElement("div");
     div.className = "item";
-    div.innerHTML = `<div class="icon">${g.icon}</div><div>${g.name}</div>`;
+    div.innerHTML = `<div class="icon">${artHTML(g)}</div><div>${g.name}</div>`;
     const btn = document.createElement("button");
     btn.textContent = "Play";
     btn.className = "primary";
