@@ -9,7 +9,10 @@
 <body>
   <header class="topbar">
     <h1>study space</h1>
-    <div class="coins"><span id="coin-count">0</span> coins</div>
+    <div class="wallet">
+      <span class="gems"><span id="gem-count">0</span> gems</span>
+      <span class="coins"><span id="coin-count">0</span> coins</span>
+    </div>
   </header>
 
   <nav class="tabs">
@@ -31,7 +34,7 @@
           <button id="btn-reset">Reset</button>
           <button id="btn-skip">Skip</button>
         </div>
-        <div class="small">Earn 1 coin per focused minute.</div>
+        <div class="small" id="earn-info"></div>
       </div>
 
       <div class="card">
@@ -59,6 +62,11 @@
 
     <!-- SHOP -->
     <section id="tab-shop" class="tab">
+      <div class="card">
+        <h2>Exchange</h2>
+        <p class="small" id="exchange-info"></p>
+        <button id="btn-exchange" class="primary">Exchange 1 gem</button>
+      </div>
       <div class="card"><h2>Themes</h2><div id="shop-themes" class="grid"></div></div>
       <div class="card"><h2>Decorations</h2><div id="shop-decorations" class="grid"></div></div>
       <div class="card"><h2>Mini games</h2><div id="shop-games" class="grid"></div></div>

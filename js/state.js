@@ -6,7 +6,8 @@ const ROOM_SLOTS = 24; // 6 x 4 grid
 function defaultState() {
   return {
     coins: 0,
-    assignments: [],          // { id, name, minutes, done }
+    gems: 0,
+    assignments: [],          // { id, name, minutes, done, gemAwarded }
     currentAssignmentId: null,
     owned: { themes: ["default"], decorations: [], games: [] },
     activeTheme: "default",

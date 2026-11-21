@@ -12,7 +12,31 @@ document.querySelectorAll(".tabs button").forEach((btn) => {
 });
 
 /* ---------- Coins & theme ---------- */
-function renderCoins() { $("#coin-count").textContent = state.coins; }
+function renderCoins() {
+  $("#coin-count").textContent = state.coins.toLocaleString();
+  $("#gem-count").textContent = state.gems.toLocaleString();
+  $("#earn-info").textContent = `Earn ${SETTINGS.coinsPerMinute} coin per focused minute. ` +
+    `Submit an assignment with ${SETTINGS.minMinutesForGem}+ focus minutes to earn ${SETTINGS.gemsPerSubmission} gem.`;
+  $("#exchange-info").textContent = `1 gem = ${SETTINGS.coinsPerGem.toLocaleString()} coins.`;
+  $("#btn-exchange").disabled = state.gems < 1;
+}
+
+$("#btn-exchange").onclick = () => {
+  if (state.gems < 1) return;
+  state.gems--;
+  state.coins += SETTINGS.coinsPerGem;
+  saveState();
+  renderAll();
+};
+
+// Submitting (marking done) pays gems once per assignment, if enough focus time was logged.
+function submitAssignment(a) {
+  a.done = true;
+  if (!a.gemAwarded && a.minutes >= SETTINGS.minMinutesForGem) {
+    a.gemAwarded = true;
+    state.gems += SETTINGS.gemsPerSubmission;
+  }
+}
 
 function applyTheme() {
   const theme = find("themes", state.activeTheme) || CATALOG.themes[0];
@@ -89,10 +113,14 @@ function renderAssignments() {
     const li = document.createElement("li");
     li.className = (a.id === state.currentAssignmentId ? "selected " : "") + (a.done ? "done" : "");
     li.innerHTML = `<span class="name"></span><span class="mins">${a.minutes} min</span>
-      <button data-act="done">${a.done ? "Undo" : "Done"}</button><button data-act="del">✕</button>`;
+      ${a.gemAwarded ? '<span class="gem-tag">+gem</span>' : ""}
+      <button data-act="done">${a.done ? "Undo" : "Submit"}</button><button data-act="del">✕</button>`;
     li.querySelector(".name").textContent = a.name;
     li.querySelector(".name").onclick = () => { state.currentAssignmentId = a.id; saveState(); renderAssignments(); };
-    li.querySelector('[data-act="done"]').onclick = () => { a.done = !a.done; saveState(); renderAssignments(); };
+    li.querySelector('[data-act="done"]').onclick = () => {
+      if (a.done) a.done = false; else submitAssignment(a);
+      saveState(); renderAll();
+    };
     li.querySelector('[data-act="del"]').onclick = () => {
       state.assignments = state.assignments.filter((x) => x !== a);
       if (state.currentAssignmentId === a.id) state.currentAssignmentId = null;
