@@ -14,7 +14,8 @@ Open `index.html` in a browser. No build step. Progress is saved in the browser'
 
 ## Extending the template
 - **Sprite art:** decorations, study buddies and mini games can use PNG sprites instead of emoji, and backdrops can use images. Drop the PNG in `assets/decorations/`, `assets/buddies/` or `assets/backdrops/` and add `sprite: "assets/...png"` (or `image:` for backdrops) to its catalog entry. See [`assets/README.md`](assets/README.md) for fields, sizing and tips.
-- `js/sprites.js`: renders an item's art (sprite with emoji fallback) everywhere it appears.
+- `js/sprites.js`: renders an item's art (sprite with emoji fallback) everywhere it appears, and trims and downscales large sprites automatically.
+- `tools/sprite-prep.html`: drop large PNGs on it to trim and resize them before adding them to `assets/`.
 - `js/space.js`: the drag-and-drop stage.
 - `js/catalog.js`: add backdrops (wall + floor colour), themes (CSS variable sets), decorations (emoji + price), mini games, timer settings, and gem rules (`gemsPerSubmission`, `partnerBonusGems`, `minMinutesForGem`, `coinsPerGem`).
 - `BUDDIES`, `BANNERS`, `WISH` in `js/catalog.js`: add buddies, add or rotate banners, tune rates, pity and cost. Logic is in `js/gacha.js`.
