@@ -26,5 +26,5 @@ function loadState() {
 let state = loadState();
 
 function saveState() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state, (k, v) => (k === "editingDeadline" ? undefined : v))); } catch (e) {}
 }

@@ -39,8 +39,12 @@
 
       <div class="card">
         <h2>Assignments</h2>
-        <form id="assignment-form" class="row">
-          <input id="assignment-input" placeholder="Add an assignment..." maxlength="80" required>
+        <p class="small">Add what's due and when. Click a name to work on it, then Submit when it's handed in.</p>
+        <form id="assignment-form" class="row wrap">
+          <input id="assignment-input" placeholder="Assignment name" maxlength="80" required>
+          <label class="small due-label">Deadline
+            <input id="assignment-deadline" type="datetime-local">
+          </label>
           <button class="primary">Add</button>
         </form>
         <ul id="assignment-list" class="list"></ul>

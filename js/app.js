@@ -97,25 +97,81 @@ $("#assignment-form").onsubmit = (e) => {
   e.preventDefault();
   const name = $("#assignment-input").value.trim();
   if (!name) return;
-  const a = { id: Date.now().toString(36), name, minutes: 0, done: false };
+  const deadline = $("#assignment-deadline").value || null; // "YYYY-MM-DDTHH:MM" local time
+  const a = { id: Date.now().toString(36), name, minutes: 0, done: false, deadline };
   state.assignments.push(a);
   if (!state.currentAssignmentId) state.currentAssignmentId = a.id;
   $("#assignment-input").value = "";
+  $("#assignment-deadline").value = "";
   saveState();
   renderAssignments();
 };
+
+// "2d 4h left", "3h 10m left", "overdue by 1d 2h"
+function timeLeftText(deadline) {
+  const ms = new Date(deadline) - Date.now();
+  const mins = Math.floor(Math.abs(ms) / 60000);
+  const d = Math.floor(mins / 1440), h = Math.floor((mins % 1440) / 60), m = mins % 60;
+  const span = d ? `${d}d ${h}h` : h ? `${h}h ${m}m` : `${m}m`;
+  if (ms < 0) return { text: `overdue by ${span}`, cls: "overdue" };
+  return { text: `${span} left`, cls: ms < 86400000 ? "soon" : "left" }; // under 24h = soon
+}
+
+function formatDeadline(deadline) {
+  return new Date(deadline).toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+// Unfinished first, soonest deadline first; no deadline after those; submitted at the bottom.
+function sortedAssignments() {
+  const key = (a) => [a.done ? 1 : 0, a.deadline ? new Date(a.deadline).getTime() : Infinity];
+  return [...state.assignments].sort((x, y) => {
+    const [a1, a2] = key(x), [b1, b2] = key(y);
+    return a1 - b1 || a2 - b2;
+  });
+}
+
+function renderDue(a, el) {
+  el.innerHTML = "";
+  if (a.editingDeadline) {
+    const input = document.createElement("input");
+    input.type = "datetime-local";
+    input.value = a.deadline || "";
+    const save = document.createElement("button");
+    save.className = "link"; save.textContent = "save";
+    save.onclick = () => { a.deadline = input.value || null; delete a.editingDeadline; saveState(); renderAssignments(); };
+    el.append(input, save);
+    return;
+  }
+  if (a.deadline) {
+    const due = document.createElement("span");
+    due.textContent = "due " + formatDeadline(a.deadline);
+    el.appendChild(due);
+    if (!a.done) {
+      const t = timeLeftText(a.deadline);
+      const left = document.createElement("span");
+      left.className = t.cls; left.textContent = "· " + t.text;
+      el.appendChild(left);
+    }
+  }
+  const edit = document.createElement("button");
+  edit.className = "link"; edit.textContent = a.deadline ? "edit" : "set deadline";
+  edit.onclick = () => { a.editingDeadline = true; renderAssignments(); };
+  el.appendChild(edit);
+}
 
 function renderAssignments() {
   const list = $("#assignment-list");
   list.innerHTML = "";
   if (!state.assignments.length) list.innerHTML = `<li class="small">No assignments yet.</li>`;
-  state.assignments.forEach((a) => {
+  sortedAssignments().forEach((a) => {
     const li = document.createElement("li");
     li.className = (a.id === state.currentAssignmentId ? "selected " : "") + (a.done ? "done" : "");
-    li.innerHTML = `<span class="name"></span><span class="mins">${a.minutes} min</span>
+    li.innerHTML = `<div class="info"><span class="name"></span><div class="due"></div></div>
+      <span class="mins">${a.minutes} min</span>
       ${a.gemAwarded ? '<span class="gem-tag">+gem</span>' : ""}
       <button data-act="done">${a.done ? "Undo" : "Submit"}</button><button data-act="del">✕</button>`;
     li.querySelector(".name").textContent = a.name;
+    renderDue(a, li.querySelector(".due"));
     li.querySelector(".name").onclick = () => { state.currentAssignmentId = a.id; saveState(); renderAssignments(); };
     li.querySelector('[data-act="done"]').onclick = () => {
       if (a.done) a.done = false; else submitAssignment(a);
@@ -273,3 +329,5 @@ function renderAll() {
 
 applyTheme();
 renderAll();
+// Keep the "time left" countdowns fresh (skip while a deadline is being edited).
+setInterval(() => { if (!state.assignments.some((a) => a.editingDeadline)) renderAssignments(); }, 30000);
