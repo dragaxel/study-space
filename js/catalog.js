@@ -36,6 +36,7 @@ const SETTINGS = {
 
   // Gems: earned by submitting (marking done) an assignment. Each assignment pays out once.
   gemsPerSubmission: 1,
+  partnerBonusGems: 1,    // extra gems for submitting a partnered (group) assignment
   minMinutesForGem: 25,   // focus minutes an assignment needs before it can earn a gem
   coinsPerGem: 100000,    // exchange rate in the shop
 };

@@ -89,6 +89,12 @@ input { flex: 1; min-width: 0; }
 .list .due .overdue { color: #c0392b; font-weight: 600; }
 .list .due .soon { color: var(--accent); font-weight: 600; }
 .list .due input { padding: 2px 6px; font-size: 13px; flex: none; }
+.partner-tag {
+  font-size: 12px; border: 1px solid var(--accent); color: var(--accent);
+  border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: middle;
+}
+.list li.partnered:not(.done) { border-left: 3px solid var(--accent); }
+.list .counting { font-size: 12px; color: var(--accent); }
 .list .due .link { border: none; background: none; padding: 0; font-size: 13px; color: var(--muted); text-decoration: underline; }
 .list .mins { color: var(--muted); font-size: 13px; }
 .list .gem-tag { font-size: 12px; border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; }

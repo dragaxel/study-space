@@ -16,7 +16,8 @@ function renderCoins() {
   $("#coin-count").textContent = state.coins.toLocaleString();
   $("#gem-count").textContent = state.gems.toLocaleString();
   $("#earn-info").textContent = `Earn ${SETTINGS.coinsPerMinute} coin per focused minute. ` +
-    `Submit an assignment with ${SETTINGS.minMinutesForGem}+ focus minutes to earn ${SETTINGS.gemsPerSubmission} gem.`;
+    `Submit an assignment with ${SETTINGS.minMinutesForGem}+ focus minutes to earn ${SETTINGS.gemsPerSubmission} gem ` +
+    `(+${SETTINGS.partnerBonusGems} bonus if it's partnered).`;
   $("#exchange-info").textContent = `1 gem = ${SETTINGS.coinsPerGem.toLocaleString()} coins.`;
   $("#btn-exchange").disabled = state.gems < 1;
 }
@@ -33,8 +34,9 @@ $("#btn-exchange").onclick = () => {
 function submitAssignment(a) {
   a.done = true;
   if (!a.gemAwarded && a.minutes >= SETTINGS.minMinutesForGem) {
-    a.gemAwarded = true;
-    state.gems += SETTINGS.gemsPerSubmission;
+    const earned = SETTINGS.gemsPerSubmission + (a.partnered ? SETTINGS.partnerBonusGems : 0);
+    a.gemAwarded = earned;  // truthy = paid out; the number is how many gems it paid
+    state.gems += earned;
   }
 }
 
@@ -98,16 +100,23 @@ $("#assignment-form").onsubmit = (e) => {
   const name = $("#assignment-input").value.trim();
   if (!name) return;
   const deadline = $("#assignment-deadline").value || null; // "YYYY-MM-DDTHH:MM" local time
-  const a = { id: Date.now().toString(36), name, minutes: 0, done: false, deadline };
+  const partnered = $("#assignment-partnered").checked;
+  const partners = partnered ? $("#assignment-partners").value.trim() : "";
+  const a = { id: Date.now().toString(36), name, minutes: 0, done: false, deadline, partnered, partners };
   state.assignments.push(a);
   if (!state.currentAssignmentId) state.currentAssignmentId = a.id;
   $("#assignment-input").value = "";
   $("#assignment-deadline").value = "";
+  $("#assignment-partnered").checked = false;
+  $("#assignment-partners").value = "";
+  $("#assignment-partners").hidden = true;
   saveState();
   renderAssignments();
 };
 
 // "2d 4h left", "3h 10m left", "overdue by 1d 2h"
+$("#assignment-partnered").onchange = (e) => { $("#assignment-partners").hidden = !e.target.checked; };
+
 function timeLeftText(deadline) {
   const ms = new Date(deadline) - Date.now();
   const mins = Math.floor(Math.abs(ms) / 60000);
@@ -123,10 +132,10 @@ function formatDeadline(deadline) {
 
 // Unfinished first, soonest deadline first; no deadline after those; submitted at the bottom.
 function sortedAssignments() {
-  const key = (a) => [a.done ? 1 : 0, a.deadline ? new Date(a.deadline).getTime() : Infinity];
+  const key = (a) => [a.done ? 1 : 0, a.deadline ? new Date(a.deadline).getTime() : Infinity, a.partnered ? 0 : 1];
   return [...state.assignments].sort((x, y) => {
-    const [a1, a2] = key(x), [b1, b2] = key(y);
-    return a1 - b1 || a2 - b2;
+    const [a1, a2, a3] = key(x), [b1, b2, b3] = key(y);
+    return a1 - b1 || (a2 === b2 ? 0 : a2 - b2) || a3 - b3;
   });
 }
 
@@ -136,10 +145,23 @@ function renderDue(a, el) {
     const input = document.createElement("input");
     input.type = "datetime-local";
     input.value = a.deadline || "";
+    const pLabel = document.createElement("label");
+    pLabel.innerHTML = `<input type="checkbox"> partnered`;
+    const pBox = pLabel.querySelector("input");
+    pBox.checked = !!a.partnered;
+    const names = document.createElement("input");
+    names.placeholder = "partner names"; names.maxLength = 80; names.value = a.partners || "";
+    names.hidden = !pBox.checked;
+    pBox.onchange = () => { names.hidden = !pBox.checked; };
     const save = document.createElement("button");
     save.className = "link"; save.textContent = "save";
-    save.onclick = () => { a.deadline = input.value || null; delete a.editingDeadline; saveState(); renderAssignments(); };
-    el.append(input, save);
+    save.onclick = () => {
+      a.deadline = input.value || null;
+      a.partnered = pBox.checked;
+      a.partners = pBox.checked ? names.value.trim() : "";
+      delete a.editingDeadline; saveState(); renderAssignments();
+    };
+    el.append(input, pLabel, names, save);
     return;
   }
   if (a.deadline) {
@@ -165,12 +187,26 @@ function renderAssignments() {
   if (!state.assignments.length) list.innerHTML = `<li class="small">No assignments yet.</li>`;
   sortedAssignments().forEach((a) => {
     const li = document.createElement("li");
-    li.className = (a.id === state.currentAssignmentId ? "selected " : "") + (a.done ? "done" : "");
-    li.innerHTML = `<div class="info"><span class="name"></span><div class="due"></div></div>
+    li.className = [a.id === state.currentAssignmentId && "selected", a.done && "done", a.partnered && "partnered"].filter(Boolean).join(" ");
+    const gemsPaid = a.gemAwarded === true ? 1 : a.gemAwarded; // older saves stored `true`
+    li.innerHTML = `<div class="info"><div><span class="name"></span></div><div class="due"></div></div>
       <span class="mins">${a.minutes} min</span>
-      ${a.gemAwarded ? '<span class="gem-tag">+gem</span>' : ""}
+      ${gemsPaid ? `<span class="gem-tag">+${gemsPaid} gem${gemsPaid > 1 ? "s" : ""}</span>` : ""}
       <button data-act="done">${a.done ? "Undo" : "Submit"}</button><button data-act="del">✕</button>`;
     li.querySelector(".name").textContent = a.name;
+    if (a.partnered) {
+      const tag = document.createElement("span");
+      tag.className = "partner-tag";
+      tag.textContent = "partnered" + (a.gemAwarded ? "" : ` · +${SETTINGS.partnerBonusGems} bonus gem`);
+      li.querySelector(".name").after(tag);
+      if (!a.done) {
+        const note = document.createElement("div");
+        note.className = "counting";
+        const plural = /,|&| and /i.test(a.partners || "");
+        note.textContent = `${a.partners || "Your group"} ${plural ? "are" : "is"} counting on you`;
+        li.querySelector(".info").appendChild(note);
+      }
+    }
     renderDue(a, li.querySelector(".due"));
     li.querySelector(".name").onclick = () => { state.currentAssignmentId = a.id; saveState(); renderAssignments(); };
     li.querySelector('[data-act="done"]').onclick = () => {
