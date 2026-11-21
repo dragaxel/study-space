@@ -20,6 +20,7 @@
     <button data-tab="space">Space</button>
     <button data-tab="shop">Shop</button>
     <button data-tab="games">Games</button>
+    <button data-tab="wish">Wish</button>
   </nav>
 
   <main>
@@ -29,6 +30,7 @@
         <div id="timer-mode" class="label">focus</div>
         <div id="timer-display" class="timer">25:00</div>
         <div class="label">working on: <span id="current-assignment">nothing selected</span></div>
+        <div id="buddy-companion" class="small" hidden></div>
         <div class="row">
           <button id="btn-start" class="primary">Start</button>
           <button id="btn-reset">Reset</button>
@@ -92,11 +94,39 @@
         <div id="game-stage"></div>
       </div>
     </section>
+
+    <!-- WISH: gacha banners for study buddies -->
+    <section id="tab-wish" class="tab">
+      <div id="banner-tabs" class="row"></div>
+      <div class="card banner">
+        <div class="banner-art" id="banner-art"></div>
+        <div class="banner-body">
+          <div class="label">limited banner</div>
+          <h2 id="banner-name"></h2>
+          <p id="banner-blurb" class="small"></p>
+          <p id="banner-rates" class="small"></p>
+          <div class="row">
+            <button id="btn-wish-1">Wish ×1</button>
+            <button id="btn-wish-10" class="primary">Wish ×10</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" id="wish-results-card" hidden>
+        <h2>Results</h2>
+        <div id="wish-results" class="grid"></div>
+      </div>
+      <div class="card">
+        <h2>Study buddies</h2>
+        <p class="small">Pick one to keep you company on the Focus page.</p>
+        <div id="buddy-collection" class="grid"></div>
+      </div>
+    </section>
   </main>
 
   <script src="js/catalog.js"></script>
   <script src="js/state.js"></script>
   <script src="js/games.js"></script>
+  <script src="js/gacha.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

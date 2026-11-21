@@ -12,6 +12,9 @@ function defaultState() {
     owned: { themes: ["default"], decorations: [], games: [] },
     activeTheme: "default",
     room: Array(ROOM_SLOTS).fill(null), // decoration id per slot
+    buddies: {},              // buddy id -> copies owned
+    activeBuddy: null,        // buddy shown on the Focus page
+    pity: 0,                  // wishes since last legendary
   };
 }
 

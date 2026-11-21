@@ -124,6 +124,25 @@ input { flex: 1; min-width: 0; }
 .slot:hover { border-color: var(--accent); }
 .slot.floor { background: var(--surface); }
 
+/* Wish (gacha) */
+.banner { display: flex; gap: 20px; align-items: center; border: 2px solid var(--accent); }
+.banner-art {
+  font-size: 88px; width: 140px; height: 140px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg);
+}
+.banner-body h2 { font-size: 22px; margin: 4px 0; }
+#banner-tabs button.active { border-color: var(--accent); color: var(--accent); }
+.r3 { border-color: var(--border); }
+.r4 { border-color: #7b6cd9; }
+.r5 { border-color: #d4a017; border-width: 2px; }
+.stars { font-size: 12px; letter-spacing: 1px; }
+.r4 .stars { color: #7b6cd9; }
+.r5 .stars { color: #d4a017; }
+.item.locked { opacity: 0.35; }
+.item.new::after { content: "new"; font-size: 11px; color: var(--accent); }
+@media (max-width: 520px) { .banner { flex-direction: column; text-align: center; } .banner .row { justify-content: center; } }
+
 /* Mini game stage */
 #game-stage { min-height: 260px; position: relative; }
 .target {

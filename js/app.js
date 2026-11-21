@@ -361,6 +361,7 @@ function renderAll() {
   renderShop();
   renderSpace();
   renderGames();
+  renderWish();
 }
 
 applyTheme();

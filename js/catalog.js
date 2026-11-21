@@ -28,6 +28,38 @@ const CATALOG = {
   ],
 };
 
+// ---------- Wish (gacha) ----------
+// Study buddies you can wish for. rarity: 3 = common, 4 = rare, 5 = legendary.
+const BUDDIES = [
+  { id: "frog",    name: "Pip the Frog",       icon: "🐸", rarity: 3 },
+  { id: "turtle",  name: "Shelly the Turtle",  icon: "🐢", rarity: 3 },
+  { id: "hamster", name: "Nibbles the Hamster", icon: "🐹", rarity: 3 },
+  { id: "chick",   name: "Peep the Chick",     icon: "🐥", rarity: 3 },
+  { id: "snail",   name: "Slowpoke the Snail", icon: "🐌", rarity: 3 },
+  { id: "owl",     name: "Professor Hoot",     icon: "🦉", rarity: 4 },
+  { id: "fox",     name: "Ember the Fox",      icon: "🦊", rarity: 4 },
+  { id: "penguin", name: "Waddles",            icon: "🐧", rarity: 4 },
+  { id: "panda",   name: "Bao the Panda",      icon: "🐼", rarity: 4 },
+  { id: "dragon",  name: "Inkwing the Dragon", icon: "🐉", rarity: 5 },
+  { id: "unicorn", name: "Starlight",          icon: "🦄", rarity: 5 },
+  { id: "phoenix", name: "Cinder",             icon: "🐦‍🔥", rarity: 5 },
+];
+
+// Banners. Each one features a buddy that gets the rate-up for its rarity.
+// Add a banner here to make it appear on the Wish page.
+const BANNERS = [
+  { id: "ink",   name: "Midnight Ink",  featured: "dragon",  blurb: "Inkwing never misses a deadline." },
+  { id: "star",  name: "Starlit Study", featured: "unicorn", blurb: "Starlight makes every all-nighter sparkle." },
+];
+
+const WISH = {
+  costPerWish: 1,         // gems per wish — so 10 wishes = 10 gems
+  rates: { 5: 0.03, 4: 0.17, 3: 0.80 },
+  featuredShare: 0.5,     // chance a pull of the featured rarity is the featured buddy
+  pity5: 50,              // guaranteed legendary on this many wishes without one
+  tenPullGuarantee4: true // every 10-wish includes at least one rare or better
+};
+
 // Pomodoro settings (minutes).
 const SETTINGS = {
   focusMinutes: 25,
