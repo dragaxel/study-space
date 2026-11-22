@@ -81,6 +81,17 @@ const WISH = {
   tenPullGuarantee4: true // every 10-wish includes at least one rare or better
 };
 
+// ---------- Lists ----------
+// Each category is its own task list, picked from the dropdown on the Focus page.
+// Add, rename or reorder categories here. `id` is stored in saves, so don't change it once used.
+const CATEGORIES = [
+  { id: "study",  name: "Study Space",  item: "assignment", placeholder: "Assignment name",        doneLabel: "Submit" },
+  { id: "work",   name: "Work Space",   item: "task",       placeholder: "Work task",              doneLabel: "Done" },
+  { id: "social", name: "Social Space", item: "plan",       placeholder: "Plan or event",          doneLabel: "Done" },
+  { id: "home",   name: "Home Space",   item: "chore",      placeholder: "Chore or errand",        doneLabel: "Done" },
+  { id: "health", name: "Health Space", item: "goal",       placeholder: "Workout, habit or goal", doneLabel: "Done" },
+];
+
 // Pomodoro settings (minutes).
 const SETTINGS = {
   focusMinutes: 25,

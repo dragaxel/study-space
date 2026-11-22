@@ -8,6 +8,7 @@ function defaultState() {
     gems: 0,
     assignments: [],          // { id, name, minutes, done, gemAwarded }
     currentAssignmentId: null,
+    activeCategory: "study",  // which list the dropdown shows
     owned: { themes: ["default"], decorations: [], games: [], backdrops: ["plain"] },
     activeTheme: "default",
     // Space stage. items are stickers in back-to-front order:
@@ -25,6 +26,8 @@ function normalizeState(saved) {
   const s = { ...base, ...saved };
   s.owned = { ...base.owned, ...(saved.owned || {}) };
   s.stage = { ...base.stage, ...(saved.stage || {}) };
+  // Saves from before lists existed: everything was homework.
+  s.assignments = (s.assignments || []).map((a) => (a.category ? a : { ...a, category: "study" }));
   // v1 saves had a 6x4 grid "room": turn each filled slot into a sticker in the same spot.
   if (Array.isArray(saved.room)) {
     saved.room.forEach((id, i) => {
