@@ -24,6 +24,8 @@ const CATALOG = {
   // See assets/README.md for the full list of art options.
   decorations: [
     { id: "desk",   name: "Study Desk", icon: "🪑", price: 50, sprite: "assets/decorations/desk.png", pixelated: true, size: 1.6 },
+    { id: "curly-plant", name: "Curly Plant", icon: "🌿", price: 20, sprite: "assets/decorations/curly-plant.png", size: 1.3 },
+    { id: "green-couch", name: "Green Couch", icon: "🛋️", price: 20, sprite: "assets/decorations/green-couch.png", size: 1.8 },
     { id: "plant",  name: "Plant",  icon: "🪴", price: 10 },
     { id: "lamp",   name: "Lamp",   icon: "💡", price: 15 },
     { id: "books",  name: "Books",  icon: "📚", price: 15 },
@@ -59,7 +61,8 @@ const BUDDIES = [
   { id: "owl",     name: "Professor Hoot",     icon: "🦉", rarity: 4 },
   { id: "blob",    name: "Gloop the Slime",    icon: "🟢", rarity: 4, sprite: "assets/buddies/blob.png", pixelated: true },
   { id: "fox",     name: "Ember the Fox",      icon: "🦊", rarity: 4 },
-  { id: "penguin", name: "Waddles",            icon: "🐧", rarity: 4 },
+  { id: "dizzy",   name: "Dizzy",              icon: "😵‍💫", rarity: 4, sprite: "assets/buddies/dizzy.png", size: 1.3 },
+  { id: "imp",     name: "Imp",                icon: "😈", rarity: 4, sprite: "assets/buddies/imp.png", size: 1.3 },
   { id: "panda",   name: "Bao the Panda",      icon: "🐼", rarity: 4 },
   { id: "dragon",  name: "Inkwing the Dragon", icon: "🐉", rarity: 5 },
   { id: "unicorn", name: "Starlight",          icon: "🦄", rarity: 5 },
