@@ -24,6 +24,8 @@ const CATALOG = {
   // See assets/README.md for the full list of art options.
   decorations: [
     { id: "desk",   name: "Study Desk", icon: "🪑", price: 50, sprite: "assets/decorations/desk.png", pixelated: true, size: 1.6 },
+    { id: "curly-plant", name: "Curly Plant", icon: "🌿", price: 20, sprite: "assets/decorations/curly-plant.png", size: 1.3 },
+    { id: "green-couch", name: "Green Couch", icon: "🛋️", price: 20, sprite: "assets/decorations/green-couch.png", size: 1.8 },
     { id: "plant",  name: "Plant",  icon: "🪴", price: 10 },
     { id: "lamp",   name: "Lamp",   icon: "💡", price: 15 },
     { id: "books",  name: "Books",  icon: "📚", price: 15 },
@@ -59,7 +61,8 @@ const BUDDIES = [
   { id: "owl",     name: "Professor Hoot",     icon: "🦉", rarity: 4 },
   { id: "blob",    name: "Gloop the Slime",    icon: "🟢", rarity: 4, sprite: "assets/buddies/blob.png", pixelated: true },
   { id: "fox",     name: "Ember the Fox",      icon: "🦊", rarity: 4 },
-  { id: "penguin", name: "Waddles",            icon: "🐧", rarity: 4 },
+  { id: "dizzy",   name: "Dizzy",              icon: "😵‍💫", rarity: 4, sprite: "assets/buddies/dizzy.png", size: 1.3 },
+  { id: "imp",     name: "Imp",                icon: "😈", rarity: 4, sprite: "assets/buddies/imp.png", size: 1.3 },
   { id: "panda",   name: "Bao the Panda",      icon: "🐼", rarity: 4 },
   { id: "dragon",  name: "Inkwing the Dragon", icon: "🐉", rarity: 5 },
   { id: "unicorn", name: "Starlight",          icon: "🦄", rarity: 5 },
@@ -80,6 +83,17 @@ const WISH = {
   pity5: 50,              // guaranteed legendary on this many wishes without one
   tenPullGuarantee4: true // every 10-wish includes at least one rare or better
 };
+
+// ---------- Lists ----------
+// Each category is its own task list, picked from the dropdown on the Focus page.
+// Add, rename or reorder categories here. `id` is stored in saves, so don't change it once used.
+const CATEGORIES = [
+  { id: "study",  name: "Study Space",  item: "assignment", placeholder: "Assignment name",        doneLabel: "Submit" },
+  { id: "work",   name: "Work Space",   item: "task",       placeholder: "Work task",              doneLabel: "Done" },
+  { id: "social", name: "Social Space", item: "plan",       placeholder: "Plan or event",          doneLabel: "Done" },
+  { id: "home",   name: "Home Space",   item: "chore",      placeholder: "Chore or errand",        doneLabel: "Done" },
+  { id: "health", name: "Health Space", item: "goal",       placeholder: "Workout, habit or goal", doneLabel: "Done" },
+];
 
 // Pomodoro settings (minutes).
 const SETTINGS = {

@@ -41,8 +41,13 @@
       </div>
 
       <div class="card">
-        <h2>Assignments</h2>
-        <p class="small">Add what's due and when. Click a name to work on it, then Submit when it's handed in.</p>
+        <div class="row between list-head">
+          <h2 id="list-title">Study Space</h2>
+          <label class="small due-label">List
+            <select id="category-select"></select>
+          </label>
+        </div>
+        <p class="small" id="list-help"></p>
         <form id="assignment-form" class="row wrap">
           <input id="assignment-input" placeholder="Assignment name" maxlength="80" required>
           <label class="small due-label">Deadline

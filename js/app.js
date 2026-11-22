@@ -16,7 +16,7 @@ function renderCoins() {
   $("#coin-count").textContent = state.coins.toLocaleString();
   $("#gem-count").textContent = state.gems.toLocaleString();
   $("#earn-info").textContent = `Earn ${SETTINGS.coinsPerMinute} coin per focused minute. ` +
-    `Submit an assignment with ${SETTINGS.minMinutesForGem}+ focus minutes to earn ${SETTINGS.gemsPerSubmission} gem ` +
+    `Finish anything on your lists with ${SETTINGS.minMinutesForGem}+ focus minutes to earn ${SETTINGS.gemsPerSubmission} gem ` +
     `(+${SETTINGS.partnerBonusGems} bonus if it's partnered).`;
   $("#exchange-info").textContent = `1 gem = ${SETTINGS.coinsPerGem.toLocaleString()} coins.`;
   $("#btn-exchange").disabled = state.gems < 1;
@@ -102,7 +102,7 @@ $("#assignment-form").onsubmit = (e) => {
   const deadline = $("#assignment-deadline").value || null; // "YYYY-MM-DDTHH:MM" local time
   const partnered = $("#assignment-partnered").checked;
   const partners = partnered ? $("#assignment-partners").value.trim() : "";
-  const a = { id: Date.now().toString(36), name, minutes: 0, done: false, deadline, partnered, partners };
+  const a = { id: Date.now().toString(36), name, minutes: 0, done: false, deadline, partnered, partners, category: state.activeCategory };
   state.assignments.push(a);
   if (!state.currentAssignmentId) state.currentAssignmentId = a.id;
   $("#assignment-input").value = "";
@@ -130,10 +130,38 @@ function formatDeadline(deadline) {
   return new Date(deadline).toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 }
 
+/* ---------- Lists (categories) ---------- */
+const activeCat = () => CATEGORIES.find((c) => c.id === state.activeCategory) || CATEGORIES[0];
+const catOf = (a) => CATEGORIES.find((c) => c.id === a.category) || CATEGORIES[0];
+
+$("#category-select").onchange = (e) => {
+  state.activeCategory = e.target.value;
+  saveState();
+  renderAssignments();
+};
+
+function renderCategories() {
+  const sel = $("#category-select");
+  const open = (id) => state.assignments.filter((a) => a.category === id && !a.done).length;
+  sel.innerHTML = "";
+  CATEGORIES.forEach((c) => {
+    const o = document.createElement("option");
+    o.value = c.id;
+    o.textContent = c.name + (open(c.id) ? ` (${open(c.id)})` : "");
+    sel.appendChild(o);
+  });
+  sel.value = activeCat().id;
+  const c = activeCat();
+  $("#list-title").textContent = c.name;
+  $("#assignment-input").placeholder = c.placeholder;
+  $("#list-help").textContent =
+    `Add each ${c.item} and when it's due. Click a name to focus on it, then ${c.doneLabel} when it's finished.`;
+}
+
 // Unfinished first, soonest deadline first; no deadline after those; submitted at the bottom.
 function sortedAssignments() {
   const key = (a) => [a.done ? 1 : 0, a.deadline ? new Date(a.deadline).getTime() : Infinity, a.partnered ? 0 : 1];
-  return [...state.assignments].sort((x, y) => {
+  return state.assignments.filter((a) => a.category === activeCat().id).sort((x, y) => {
     const [a1, a2, a3] = key(x), [b1, b2, b3] = key(y);
     return a1 - b1 || (a2 === b2 ? 0 : a2 - b2) || a3 - b3;
   });
@@ -184,15 +212,17 @@ function renderDue(a, el) {
 function renderAssignments() {
   const list = $("#assignment-list");
   list.innerHTML = "";
-  if (!state.assignments.length) list.innerHTML = `<li class="small">No assignments yet.</li>`;
-  sortedAssignments().forEach((a) => {
+  renderCategories();
+  const items = sortedAssignments();
+  if (!items.length) list.innerHTML = `<li class="small">Nothing in ${activeCat().name} yet.</li>`;
+  items.forEach((a) => {
     const li = document.createElement("li");
     li.className = [a.id === state.currentAssignmentId && "selected", a.done && "done", a.partnered && "partnered"].filter(Boolean).join(" ");
     const gemsPaid = a.gemAwarded === true ? 1 : a.gemAwarded; // older saves stored `true`
     li.innerHTML = `<div class="info"><div><span class="name"></span></div><div class="due"></div></div>
       <span class="mins">${a.minutes} min</span>
       ${gemsPaid ? `<span class="gem-tag">+${gemsPaid} gem${gemsPaid > 1 ? "s" : ""}</span>` : ""}
-      <button data-act="done">${a.done ? "Undo" : "Submit"}</button><button data-act="del">✕</button>`;
+      <button data-act="done">${a.done ? "Undo" : catOf(a).doneLabel}</button><button data-act="del">✕</button>`;
     li.querySelector(".name").textContent = a.name;
     if (a.partnered) {
       const tag = document.createElement("span");
@@ -221,7 +251,7 @@ function renderAssignments() {
     list.appendChild(li);
   });
   const cur = state.assignments.find((x) => x.id === state.currentAssignmentId);
-  $("#current-assignment").textContent = cur ? cur.name : "nothing selected";
+  $("#current-assignment").textContent = cur ? `${cur.name} (${catOf(cur).name})` : "nothing selected";
 }
 
 /* ---------- Shop ---------- */

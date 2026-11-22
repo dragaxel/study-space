@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sprite Prep · Study Space</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .drop { display: block; border: 2px dashed var(--border); border-radius: 8px; padding: 32px 16px; text-align: center; color: var(--muted); cursor: pointer; }
+    .drop.over { border-color: var(--accent); color: var(--accent); }
+    .opts { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin: 12px 0; }
+    .opts label { display: flex; gap: 6px; align-items: center; }
+    .opts select, .opts input { flex: none; }
+    .result { display: grid; grid-template-columns: 96px 96px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--border); }
+    .thumb { width: 96px; height: 96px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 6px;
+      background: repeating-conic-gradient(#0000000d 0 25%, transparent 0 50%) 0 0 / 16px 16px; }
+    .thumb img { max-width: 100%; max-height: 100%; }
+    .thumb.pix img { image-rendering: pixelated; }
+    .meta { font-size: 13px; color: var(--muted); word-break: break-all; }
+    .meta b { color: var(--text); font-weight: 600; }
+    code { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 4px; font-size: 12px; }
+    @media (max-width: 560px) { .result { grid-template-columns: 72px 72px 1fr; } .result button { grid-column: 1 / -1; } .thumb { width: 72px; height: 72px; } }
+  </style>
+</head>
+<body>
+  <header class="topbar"><h1>study space · sprite prep</h1></header>
+  <main>
+    <div class="card">
+      <h2>Prepare sprites</h2>
+      <p class="small">Drop large PNGs here. Each one is trimmed to its visible pixels and scaled down, ready to save into
+        <code>assets/decorations/</code> or <code>assets/buddies/</code>. Nothing is uploaded: it all happens in this browser.</p>
+      <div class="opts">
+        <label class="small">Max size
+          <select id="max">
+            <option value="256">256 px</option>
+            <option value="512" selected>512 px (recommended)</option>
+            <option value="768">768 px</option>
+            <option value="1024">1024 px</option>
+          </select>
+        </label>
+        <label class="small"><input type="checkbox" id="trim" checked> Trim transparent edges</label>
+        <label class="small"><input type="checkbox" id="pixel"> Pixel art (no smoothing)</label>
+      </div>
+      <label class="drop" id="drop">
+        <input type="file" id="files" accept="image/png,image/webp,image/jpeg" multiple hidden>
+        Drop PNG files here, or click to choose
+      </label>
+    </div>
+    <div class="card" id="results-card" hidden>
+      <div class="row between"><h2>Results</h2><button id="save-all" class="primary">Download all</button></div>
+      <div id="results"></div>
+    </div>
+  </main>
+
+  <script src="../js/sprites.js"></script>
+  <script>
+    const drop = document.getElementById("drop");
+    const results = document.getElementById("results");
+    const outputs = [];
+    const kb = (n) => (n / 1024).toFixed(n < 10240 ? 1 : 0) + " KB";
+    const slug = (name) => name.replace(/\.[^.]+$/, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "sprite";
+    const dims = (url) => new Promise((res) => { const i = new Image(); i.onload = () => res([i.naturalWidth, i.naturalHeight]); i.onerror = () => res([0, 0]); i.src = url; });
+
+    function download(blob, name) {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+
+    async function handle(files) {
+      const opts = {
+        maxPx: +document.getElementById("max").value,
+        trim: document.getElementById("trim").checked,
+        pixelated: document.getElementById("pixel").checked,
+      };
+      document.getElementById("results-card").hidden = false;
+      for (const file of files) {
+        if (!file.type.startsWith("image/")) continue;
+        const inUrl = URL.createObjectURL(file);
+        const outUrl = await processSprite(inUrl, opts);
+        const outBlob = await (await fetch(outUrl)).blob();
+        const [iw, ih] = await dims(inUrl), [ow, oh] = await dims(outUrl);
+        const name = slug(file.name) + ".png";
+        outputs.push({ blob: outBlob, name });
+
+        const row = document.createElement("div");
+        row.className = "result";
+        const pix = opts.pixelated ? " pix" : "";
+        row.innerHTML = `<div class="thumb${pix}"><img src="${inUrl}" alt=""></div><div class="thumb${pix}"><img src="${outUrl}" alt=""></div>
+          <div class="meta"><b></b><br>before ${iw}×${ih}, ${kb(file.size)}<br>after <b>${ow}×${oh}</b>, ${kb(outBlob.size)}
+          ${outUrl === inUrl ? "<br>(already trimmed and small enough)" : ""}<br>catalog: <code></code></div><button>Download</button>`;
+        row.querySelector(".meta b").textContent = name;
+        row.querySelector("code").textContent = `sprite: "assets/…/${name}"${opts.pixelated ? ", pixelated: true" : ""}`;
+        row.querySelector("button").onclick = () => download(outBlob, name);
+        results.appendChild(row);
+      }
+    }
+
+    document.getElementById("files").onchange = (e) => handle([...e.target.files]);
+    drop.ondragover = (e) => { e.preventDefault(); drop.classList.add("over"); };
+    drop.ondragleave = () => drop.classList.remove("over");
+    drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove("over"); handle([...e.dataTransfer.files]); };
+    document.getElementById("save-all").onclick = () => outputs.forEach((o, i) => setTimeout(() => download(o.blob, o.name), i * 250));
+  </script>
+</body>
+</html>
