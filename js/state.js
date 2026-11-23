@@ -9,6 +9,8 @@ function defaultState() {
     assignments: [],          // { id, name, minutes, done, gemAwarded }
     currentAssignmentId: null,
     activeCategory: "study",  // which list the dropdown shows
+    classMode: false,         // stopwatch earns reduced coins while in class
+    coinFraction: 0,          // partial coin carried over from class mode
     owned: { themes: ["default"], decorations: [], games: [], backdrops: ["plain"] },
     activeTheme: "default",
     // Space stage. items are stickers in back-to-front order:

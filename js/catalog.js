@@ -101,15 +101,14 @@ const CATEGORIES = [
   { id: "health", name: "Health Space", item: "goal",       placeholder: "Workout, habit or goal", doneLabel: "Done" },
 ];
 
-// Pomodoro settings (minutes).
+// Stopwatch and rewards.
 const SETTINGS = {
-  focusMinutes: 25,
-  breakMinutes: 5,
   coinsPerMinute: 1,
+  classModeRate: 0.5,     // class mode earns this fraction of normal coins (½), tracked to the half coin
 
   // Gems: earned by submitting (marking done) an assignment. Each assignment pays out once.
   gemsPerSubmission: 1,
   partnerBonusGems: 1,    // extra gems for submitting a partnered (group) assignment
-  minMinutesForGem: 25,   // focus minutes an assignment needs before it can earn a gem
+  defaultGoalMinutes: 25, // each item's goal: focus minutes needed before finishing it earns a gem (editable per item)
   coinsPerGem: 100000,    // exchange rate in the shop
 };

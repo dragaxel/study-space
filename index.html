@@ -28,14 +28,18 @@
     <!-- FOCUS: pomodoro timer + assignments -->
     <section id="tab-focus" class="tab active">
       <div class="card timer-card">
+        <label class="switch">
+          <input type="checkbox" id="class-mode">
+          <span class="track"><span class="knob"></span></span>
+          <span>Class mode <span class="small" id="class-rate"></span></span>
+        </label>
         <div id="timer-mode" class="label">focus</div>
-        <div id="timer-display" class="timer">25:00</div>
-        <div class="label">working on: <span id="current-assignment">nothing selected</span></div>
+        <div id="timer-display" class="timer">0:00</div>
+        <div class="label" id="working-on-line">working on: <span id="current-assignment">nothing selected</span></div>
         <div id="buddy-companion" class="small" hidden></div>
         <div class="row">
           <button id="btn-start" class="primary">Start</button>
           <button id="btn-reset">Reset</button>
-          <button id="btn-skip">Skip</button>
         </div>
         <div class="small" id="earn-info"></div>
       </div>
@@ -52,6 +56,9 @@
           <input id="assignment-input" placeholder="Assignment name" maxlength="80" required>
           <label class="small due-label">Deadline
             <input id="assignment-deadline" type="datetime-local">
+          </label>
+          <label class="small due-label">Goal
+            <input id="assignment-goal" type="number" min="1" max="600" step="1" value="25" class="goal-input"> min
           </label>
           <label class="small due-label"><input id="assignment-partnered" type="checkbox"> Partnered</label>
           <input id="assignment-partners" placeholder="Partner names (optional)" maxlength="80" hidden>

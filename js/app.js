@@ -15,8 +15,8 @@ document.querySelectorAll(".tabs button").forEach((btn) => {
 function renderCoins() {
   $("#coin-count").textContent = state.coins.toLocaleString();
   $("#gem-count").textContent = state.gems.toLocaleString();
-  $("#earn-info").textContent = `Earn ${SETTINGS.coinsPerMinute} coin per focused minute. ` +
-    `Finish anything on your lists with ${SETTINGS.minMinutesForGem}+ focus minutes to earn ${SETTINGS.gemsPerSubmission} gem ` +
+  $("#earn-info").textContent = `Earn ${SETTINGS.coinsPerMinute} coin per focused minute ` +
+    `(half in class mode). Reach an item's goal minutes, then finish it to earn ${SETTINGS.gemsPerSubmission} gem ` +
     `(+${SETTINGS.partnerBonusGems} bonus if it's partnered).`;
   $("#exchange-info").textContent = `1 gem = ${SETTINGS.coinsPerGem.toLocaleString()} coins.`;
   $("#btn-exchange").disabled = state.gems < 1;
@@ -30,10 +30,14 @@ $("#btn-exchange").onclick = () => {
   renderAll();
 };
 
-// Submitting (marking done) pays gems once per assignment, if enough focus time was logged.
+// Each item's goal in focus minutes (older items without one use the default).
+const goalOf = (a) => a.goal || SETTINGS.defaultGoalMinutes;
+const clampGoal = (v) => Math.min(600, Math.max(1, Math.round(+v) || SETTINGS.defaultGoalMinutes));
+
+// Submitting (marking done) pays gems once per item, if its goal minutes were reached.
 function submitAssignment(a) {
   a.done = true;
-  if (!a.gemAwarded && a.minutes >= SETTINGS.minMinutesForGem) {
+  if (!a.gemAwarded && a.minutes >= goalOf(a)) {
     const earned = SETTINGS.gemsPerSubmission + (a.partnered ? SETTINGS.partnerBonusGems : 0);
     a.gemAwarded = earned;  // truthy = paid out; the number is how many gems it paid
     state.gems += earned;
@@ -45,54 +49,83 @@ function applyTheme() {
   for (const [k, v] of Object.entries(theme.vars)) document.documentElement.style.setProperty(k, v);
 }
 
-/* ---------- Pomodoro timer ---------- */
-const timer = { mode: "focus", remaining: SETTINGS.focusMinutes * 60, running: false, interval: null, secondsInMinute: 0 };
+/* ---------- Stopwatch ---------- */
+// Counts up from 0. Time comes from the clock, not from counting ticks, so it stays
+// accurate when the tab is in the background. Every full minute pays coins:
+// normal minutes also add a minute to the selected item; class minutes pay at a reduced rate.
+const timer = { base: 0, startedAt: null, paidMinutes: 0, interval: null };
+const elapsedSec = () => timer.base + (timer.startedAt ? (Date.now() - timer.startedAt) / 1000 : 0);
+
+function formatElapsed(sec) {
+  sec = Math.floor(sec);
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+  const pad = (n) => String(n).padStart(2, "0");
+  return h ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
 
 function renderTimer() {
-  const m = String(Math.floor(timer.remaining / 60)).padStart(2, "0");
-  const s = String(timer.remaining % 60).padStart(2, "0");
-  $("#timer-display").textContent = `${m}:${s}`;
-  $("#timer-mode").textContent = timer.mode === "focus" ? "focus" : "break";
-  $("#btn-start").textContent = timer.running ? "Pause" : "Start";
-  document.title = timer.running ? `${m}:${s} · Study Space` : "Study Space";
+  const t = formatElapsed(elapsedSec());
+  const running = !!timer.startedAt;
+  $("#timer-display").textContent = t;
+  $("#timer-mode").textContent = state.classMode ? "in class" : "focus";
+  $("#btn-start").textContent = running ? "Pause" : elapsedSec() > 0 ? "Resume" : "Start";
+  $("#class-mode").checked = !!state.classMode;
+  $("#class-rate").textContent = `(${SETTINGS.classModeRate === 0.5 ? "½" : SETTINGS.classModeRate + "×"} coins)`;
+  $(".timer-card").classList.toggle("class-on", !!state.classMode);
+  $("#working-on-line").hidden = !!state.classMode;
+  document.title = running ? `${t} · Study Space` : "Study Space";
+}
+
+function payMinute() {
+  if (state.classMode) {
+    state.coinFraction = (state.coinFraction || 0) + SETTINGS.coinsPerMinute * SETTINGS.classModeRate;
+    const whole = Math.floor(state.coinFraction + 1e-9);
+    state.coins += whole;
+    state.coinFraction -= whole;
+  } else {
+    state.coins += SETTINGS.coinsPerMinute;
+    const a = state.assignments.find((x) => x.id === state.currentAssignmentId);
+    if (a) a.minutes++;
+  }
 }
 
 function tick() {
-  timer.remaining--;
-  if (timer.mode === "focus") {
-    timer.secondsInMinute++;
-    if (timer.secondsInMinute >= 60) {   // a full focused minute: pay out
-      timer.secondsInMinute = 0;
-      state.coins += SETTINGS.coinsPerMinute;
-      const a = state.assignments.find((x) => x.id === state.currentAssignmentId);
-      if (a) a.minutes++;
-      saveState();
-      renderCoins();
-      renderAssignments();
-    }
+  const minutes = Math.floor(elapsedSec() / 60);
+  if (minutes > timer.paidMinutes) {
+    while (timer.paidMinutes < minutes) { payMinute(); timer.paidMinutes++; }
+    saveState();
+    renderCoins();
+    renderAssignments();
   }
-  if (timer.remaining <= 0) switchMode();
   renderTimer();
 }
 
-function switchMode() {
-  timer.mode = timer.mode === "focus" ? "break" : "focus";
-  timer.remaining = (timer.mode === "focus" ? SETTINGS.focusMinutes : SETTINGS.breakMinutes) * 60;
-  timer.secondsInMinute = 0;
+function pauseTimer() {
+  if (!timer.startedAt) return;
+  tick();
+  timer.base = elapsedSec();
+  timer.startedAt = null;
+  clearInterval(timer.interval);
 }
 
 $("#btn-start").onclick = () => {
-  timer.running = !timer.running;
-  if (timer.running) timer.interval = setInterval(tick, 1000);
-  else clearInterval(timer.interval);
+  if (timer.startedAt) pauseTimer();
+  else { timer.startedAt = Date.now(); timer.interval = setInterval(tick, 250); }
   renderTimer();
 };
 $("#btn-reset").onclick = () => {
-  timer.remaining = (timer.mode === "focus" ? SETTINGS.focusMinutes : SETTINGS.breakMinutes) * 60;
-  timer.secondsInMinute = 0;
+  pauseTimer();
+  timer.base = 0;
+  timer.paidMinutes = 0;
   renderTimer();
 };
-$("#btn-skip").onclick = () => { switchMode(); renderTimer(); };
+$("#class-mode").onchange = (e) => {
+  const on = e.target.checked; // read before tick(), which re-renders the switch from state
+  tick(); // pay any finished minute at the old rate first
+  state.classMode = on;
+  saveState();
+  renderAll();
+};
 
 /* ---------- Assignments ---------- */
 $("#assignment-form").onsubmit = (e) => {
@@ -102,11 +135,13 @@ $("#assignment-form").onsubmit = (e) => {
   const deadline = $("#assignment-deadline").value || null; // "YYYY-MM-DDTHH:MM" local time
   const partnered = $("#assignment-partnered").checked;
   const partners = partnered ? $("#assignment-partners").value.trim() : "";
-  const a = { id: Date.now().toString(36), name, minutes: 0, done: false, deadline, partnered, partners, category: state.activeCategory };
+  const goal = clampGoal($("#assignment-goal").value);
+  const a = { id: Date.now().toString(36), name, minutes: 0, goal, done: false, deadline, partnered, partners, category: state.activeCategory };
   state.assignments.push(a);
   if (!state.currentAssignmentId) state.currentAssignmentId = a.id;
   $("#assignment-input").value = "";
   $("#assignment-deadline").value = "";
+  $("#assignment-goal").value = SETTINGS.defaultGoalMinutes;
   $("#assignment-partnered").checked = false;
   $("#assignment-partners").value = "";
   $("#assignment-partners").hidden = true;
@@ -181,15 +216,20 @@ function renderDue(a, el) {
     names.placeholder = "partner names"; names.maxLength = 80; names.value = a.partners || "";
     names.hidden = !pBox.checked;
     pBox.onchange = () => { names.hidden = !pBox.checked; };
+    const gLabel = document.createElement("label");
+    gLabel.innerHTML = `goal <input type="number" min="1" max="600" step="1" class="goal-input"> min`;
+    const gInput = gLabel.querySelector("input");
+    gInput.value = goalOf(a);
     const save = document.createElement("button");
     save.className = "link"; save.textContent = "save";
     save.onclick = () => {
       a.deadline = input.value || null;
+      a.goal = clampGoal(gInput.value);
       a.partnered = pBox.checked;
       a.partners = pBox.checked ? names.value.trim() : "";
       delete a.editingDeadline; saveState(); renderAssignments();
     };
-    el.append(input, pLabel, names, save);
+    el.append(input, gLabel, pLabel, names, save);
     return;
   }
   if (a.deadline) {
@@ -220,7 +260,7 @@ function renderAssignments() {
     li.className = [a.id === state.currentAssignmentId && "selected", a.done && "done", a.partnered && "partnered"].filter(Boolean).join(" ");
     const gemsPaid = a.gemAwarded === true ? 1 : a.gemAwarded; // older saves stored `true`
     li.innerHTML = `<div class="info"><div><span class="name"></span></div><div class="due"></div></div>
-      <span class="mins">${a.minutes} min</span>
+      <span class="mins${a.minutes >= goalOf(a) ? " met" : ""}" title="focus minutes / goal">${a.minutes}/${goalOf(a)} min${a.minutes >= goalOf(a) ? " ✓" : ""}</span>
       ${gemsPaid ? `<span class="gem-tag">+${gemsPaid} gem${gemsPaid > 1 ? "s" : ""}</span>` : ""}
       <button data-act="done">${a.done ? "Undo" : catOf(a).doneLabel}</button><button data-act="del">✕</button>`;
     li.querySelector(".name").textContent = a.name;
@@ -356,6 +396,7 @@ function renderAll() {
 }
 
 applyTheme();
+$("#assignment-goal").value = SETTINGS.defaultGoalMinutes;
 renderAll();
 // Keep the "time left" countdowns fresh (skip while a deadline is being edited).
 setInterval(() => { if (!state.assignments.some((a) => a.editingDeadline)) renderAssignments(); }, 30000);

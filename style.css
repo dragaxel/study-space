@@ -72,6 +72,19 @@ textarea {
 .small { font-size: 13px; color: var(--muted); }
 .label { color: var(--muted); font-size: 14px; }
 
+/* Class mode switch (flat) */
+.switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+.switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.switch .track { width: 36px; height: 20px; border-radius: 10px; background: var(--border); position: relative; flex: none; transition: background 0.15s; }
+.switch .knob { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--surface); transition: left 0.15s; }
+.switch input:checked + .track { background: var(--accent); }
+.switch input:checked + .track .knob { left: 18px; }
+.switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
+.timer-card.class-on .timer { color: var(--accent); }
+.goal-input { width: 64px; flex: none; }
+#assignment-input { flex: 1 1 100%; } /* name gets its own line; deadline, goal, partnered and Add wrap below */
+.list .mins.met { color: var(--accent); font-weight: 600; }
+
 /* Timer */
 .timer-card { text-align: center; }
 .timer-card .row { justify-content: center; }

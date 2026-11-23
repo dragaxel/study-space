@@ -1,13 +1,14 @@
 # Study Space
 
-A minimalist pomodoro homework tracker. Focus time earns coins; spend them on themes, room decorations and mini games.
+A minimalist stopwatch homework tracker. Focus time earns coins; spend them on themes, room decorations and mini games.
 
 Open `index.html` in a browser. No build step. Progress is saved in the browser's localStorage. To move it to another browser or device (or back it up), use the **Save** tab: generate a save code, copy it, and paste it into Load on the other side.
 
 ## How it works
 - **Lists**: a dropdown on the Focus page switches between Study, Work, Social, Home and Health Space. Each has its own list; the timer, coins, gems, deadlines and partners work the same in all of them. Categories are defined in `CATEGORIES` in `js/catalog.js`.
-- **Focus**: add assignments with an optional deadline (each shows the due date and a live "time left" countdown, sorted soonest first), select one, run the 25/5 pomodoro timer. Each focused minute = 1 coin + 1 minute logged to the assignment.
-- **Gems**: clicking **Submit** on an assignment with at least 25 focus minutes awards 1 gem (once per assignment). Assignments marked **Partnered** (group work, with optional partner names) pay +1 bonus gem and are highlighted with a "counting on you" reminder. 1 gem = 100,000 coins via the Exchange in the Shop.
+- **Focus**: add assignments with an optional deadline (each shows the due date and a live "time left" countdown, sorted soonest first), and a goal in focus minutes (25 by default, changeable per item). Select one and start the stopwatch, which counts up from 0:00. Each focused minute = 1 coin + 1 minute logged to the item.
+- **Class mode**: a toggle on the timer for time spent in class. Class minutes earn half coins (`classModeRate`) and don't add minutes to the selected item.
+- **Gems**: clicking **Submit** (or **Done**) on an item that has reached its goal minutes awards 1 gem (once per assignment). Assignments marked **Partnered** (group work, with optional partner names) pay +1 bonus gem and are highlighted with a "counting on you" reminder. 1 gem = 100,000 coins via the Exchange in the Shop.
 - **Shop**: buy themes, decorations and mini games.
 - **Space**: a dress-up style sticker stage. Drag decorations and study buddies from the tray onto a backdrop, move them anywhere, resize, flip, layer front/back, and drag them off the stage to put them away. Backdrops are bought in the Shop.
 - **Games**: play unlocked mini games.
@@ -18,7 +19,7 @@ Open `index.html` in a browser. No build step. Progress is saved in the browser'
 - `js/sprites.js`: renders an item's art (sprite with emoji fallback) everywhere it appears, and trims and downscales large sprites automatically.
 - `tools/sprite-prep.html`: drop large PNGs on it to trim and resize them before adding them to `assets/`.
 - `js/space.js`: the drag-and-drop stage.
-- `js/catalog.js`: add backdrops (wall + floor colour), themes (CSS variable sets), decorations (emoji + price), mini games, timer settings, and gem rules (`gemsPerSubmission`, `partnerBonusGems`, `minMinutesForGem`, `coinsPerGem`).
+- `js/catalog.js`: add backdrops (wall + floor colour), themes (CSS variable sets), decorations (emoji + price), mini games, timer settings, and gem rules (`gemsPerSubmission`, `partnerBonusGems`, `defaultGoalMinutes`, `classModeRate`, `coinsPerGem`).
 - `BUDDIES`, `BANNERS`, `WISH` in `js/catalog.js`: add buddies, add or rotate banners, tune rates, pity and cost. Logic is in `js/gacha.js`.
 - `js/games.js`: add a function for each new mini game, then reference it from `CATALOG.games`.
 - `style.css`: flat styling, no shadows.
