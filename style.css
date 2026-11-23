@@ -127,6 +127,9 @@ select {
 /* Sprites (PNG art). 1em tall so they size like the emoji they replace. */
 .sprite { height: 1em; width: auto; max-width: 3em; object-fit: contain; vertical-align: middle; display: inline-block; }
 .sprite.pixelated { image-rendering: pixelated; }
+/* Drawn characters are usually tall and narrow, so give sprites extra height on cards and the banner. */
+.item .icon .sprite, .chip .icon .sprite { height: 1.6em; }
+.banner-art .sprite { height: 1.4em; }
 .sticker img, .drag-ghost img, .chip img { pointer-events: none; }
 .companion-art { font-size: 20px; vertical-align: middle; }
 

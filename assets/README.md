@@ -78,6 +78,8 @@ If a sprite doesn't show up, open the browser console (F12). It prints `sprite n
 
 - `decorations/curly-plant.png`, `decorations/green-couch.png`: the Curly Plant and Green Couch decorations.
 - `buddies/dizzy.png`, `buddies/imp.png`: the Dizzy and Imp 4★ buddies.
+- `buddies/tin.png`, `buddies/hug.png`, `buddies/alan.png`, `buddies/catherine.png`: the Tin, Hug, Alan and Catherine 4★ buddies.
+- `buddies/angry_teto.png`: Angry Teto, a 5★ buddy featured on the Red Pen Fury banner.
 
 - `decorations/desk.png`: the "Study Desk" decoration (32×32 pixel art).
 - `buddies/blob.png`: "Gloop the Slime", a 4★ buddy (22×22 pixel art).
