@@ -64,14 +64,20 @@ const BUDDIES = [
   { id: "dizzy",   name: "Dizzy",              icon: "😵‍💫", rarity: 4, sprite: "assets/buddies/dizzy.png", size: 1.3 },
   { id: "imp",     name: "Imp",                icon: "😈", rarity: 4, sprite: "assets/buddies/imp.png", size: 1.3 },
   { id: "panda",   name: "Bao the Panda",      icon: "🐼", rarity: 4 },
+  { id: "tin",       name: "Tin",       icon: "☕", rarity: 4, sprite: "assets/buddies/tin.png", size: 1.3 },
+  { id: "hug",       name: "Hug",       icon: "🤗", rarity: 4, sprite: "assets/buddies/hug.png", size: 1.3 },
+  { id: "alan",      name: "Alan",      icon: "👽", rarity: 4, sprite: "assets/buddies/alan.png", size: 1.3 },
+  { id: "catherine", name: "Catherine", icon: "🐱", rarity: 4, sprite: "assets/buddies/catherine.png", size: 1.3 },
   { id: "dragon",  name: "Inkwing the Dragon", icon: "🐉", rarity: 5 },
   { id: "unicorn", name: "Starlight",          icon: "🦄", rarity: 5 },
   { id: "phoenix", name: "Cinder",             icon: "🐦‍🔥", rarity: 5 },
+  { id: "angry_teto", name: "Angry Teto",    icon: "😠", rarity: 5, sprite: "assets/buddies/angry_teto.png", size: 1.3 },
 ];
 
 // Banners. Each one features a buddy that gets the rate-up for its rarity.
 // Add a banner here to make it appear on the Wish page.
 const BANNERS = [
+  { id: "teto",  name: "Red Pen Fury",  featured: "angry_teto", blurb: "Angry Teto has graded your essay. You will be revising." },
   { id: "ink",   name: "Midnight Ink",  featured: "dragon",  blurb: "Inkwing never misses a deadline." },
   { id: "star",  name: "Starlit Study", featured: "unicorn", blurb: "Starlight makes every all-nighter sparkle." },
 ];
